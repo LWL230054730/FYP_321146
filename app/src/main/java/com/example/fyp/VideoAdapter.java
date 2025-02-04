@@ -37,6 +37,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         holder.tvDifficulty.setText(video.getDifficulty());
         holder.ivThumbnail.setImageResource(video.getThumbnailResId());
 
+        // Initialize the state of the Like button
+        holder.bindLikeButton();
         holder.itemView.setOnClickListener(v -> listener.onItemClick(video));
     }
 
@@ -47,7 +49,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     static class VideoViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvDuration, tvDifficulty;
-        ImageView ivThumbnail;
+        ImageView ivThumbnail, ivLike;
+        boolean isLiked = false;
 
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -55,6 +58,27 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             tvDuration = itemView.findViewById(R.id.tvDuration);
             tvDifficulty = itemView.findViewById(R.id.tvDifficulty);
             ivThumbnail = itemView.findViewById(R.id.ivThumbnail);
+            ivLike = itemView.findViewById(R.id.ivLike);
+
+            ivLike.setOnClickListener(v -> toggleLike());
+        }
+
+        private void toggleLike() {
+            isLiked = !isLiked;
+            if (isLiked) {
+                ivLike.setImageResource(R.drawable.like_filled);
+            } else {
+                ivLike.setImageResource(R.drawable.like_outline);
+            }
+        }
+
+        // Initialize the state of the Like button
+        public void bindLikeButton() {
+            if (isLiked) {
+                ivLike.setImageResource(R.drawable.like_filled);
+            } else {
+                ivLike.setImageResource(R.drawable.like_outline);
+            }
         }
     }
 }
