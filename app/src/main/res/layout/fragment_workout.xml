@@ -5,11 +5,10 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <!-- 可滑动的中间区域 -->
+    <!-- 滑动区域 (包含所有内容) -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"> <!-- 設為 match_parent 確保可滾動 -->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -116,6 +115,73 @@
                     android:textSize="16sp" />
             </FrameLayout>
 
+            <!-- Workout 标题 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Workouts"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- 底部按钮 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start"> <!-- 靠左对齐 -->
+
+                <!-- Liked 按钮 -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="32dp"
+                    android:gravity="start">
+
+                    <ImageView
+                        android:id="@+id/liked_videos_button"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:clickable="true"
+                        android:src="@drawable/like_filled"
+                        android:contentDescription="View liked videos"
+                        android:background="@drawable/border"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Liked"
+                        android:textSize="14sp"
+                        android:paddingTop="4dp"/>
+                </LinearLayout>
+
+                <!-- All Workouts 按钮 -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start">
+
+                    <ImageView
+                        android:id="@+id/all_videos_button"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:clickable="true"
+                        android:src="@drawable/video_list"
+                        android:contentDescription="View all videos"
+                        android:background="@drawable/border"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All Workouts"
+                        android:textSize="14sp"
+                        android:paddingTop="4dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

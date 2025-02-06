@@ -47,10 +47,19 @@
                 android:textColor="#666666"/>
 
             <TextView
-                android:id="@+id/tvDifficulty"
+                android:id="@+id/tvDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Difficult"
+                android:layout_marginTop="8dp"
+                android:text="Description"
+                android:textColor="#666666"/>
+
+            <TextView
+                android:id="@+id/tvLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Level"
                 android:textColor="#666666"/>
         </LinearLayout>
 

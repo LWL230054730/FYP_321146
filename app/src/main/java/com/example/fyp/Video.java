@@ -1,22 +1,51 @@
 package com.example.fyp;
 
 public class Video {
+    private int id;
     private String title;
     private String duration;
-    private String difficulty;
+    private String type;
+    private String description;
     private String url;
-    private int thumbnailResId;
-    public Video(String title, String duration, String difficulty, String url, int thumbnailResId) {
+    private String thumbnail; //本地資源 ID
+    private String level;
+
+    public Video(int id,String title, String duration, String type, String description, String url, String thumbnail, String level) {
+        this.id=id;
         this.title = title;
         this.duration = duration;
-        this.difficulty = difficulty;
+        this.type = type;
+        this.description = description;
         this.url = url;
-        this.thumbnailResId = thumbnailResId;
+        this.thumbnail = thumbnail;
+        this.level = level;
     }
 
-    public String getTitle() { return title; }
-    public String getDuration() { return duration; }
-    public String getDifficulty() { return difficulty; }
-    public String getUrl() { return url; }
-    public int getThumbnailResId() { return thumbnailResId; }
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public String getLevel() {
+        return level;
+    }
 }

@@ -34,4 +34,10 @@ public interface ApiService {
 
     @POST("api/plan/videos")
     Call<List<VideoResponse>> getPlanVideos(@Body PlanIdRequest planIdRequest);
+
+    @GET("api/videos")
+    Call<List<Video>> getVideosByType(@Query("type") String type);
+
+    @GET("api/videos")
+    Call<List<Video>> getVideos();
 }

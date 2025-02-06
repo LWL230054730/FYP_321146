@@ -43,7 +43,7 @@
         <activity android:name=".HIITVideoActivity" />
         <activity android:name=".StrengthVideoActivity" />
         <activity android:name=".TrainingDetailActivity" />
-        <activity android:name=".AddPlanActivity" />
+        <activity android:name=".AllVideosActivity" />
         <activity
             android:name=".YouTubePlayerActivity"
             android:configChanges="orientation|screenSize"

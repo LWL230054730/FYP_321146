@@ -354,3 +354,33 @@ app.post('/api/plan/videos', (req, res) => {
         res.status(200).json(results);
     });
 });
+
+app.get('/api/videos', (req, res) => {
+    const limit = parseInt(req.query.limit) || 10; // 默认每页 10 条
+    const offset = parseInt(req.query.offset) || 0; // 默认从第 0 条开始
+    const type = req.query.type || null; // 可选查询参数
+
+    let query = `SELECT id, title, type, duration, description, url, thumbnail, level FROM videos`;
+    const params = [];
+
+    if (type) {
+        query += ` WHERE type = ?`;
+        params.push(type);
+    }
+
+    query += ` LIMIT ? OFFSET ?`;
+    params.push(limit, offset);
+
+    db.query(query, params, (error, results) => {
+        if (error) {
+            console.error('Database error:', error.message, error.stack);
+            return res.status(500).json({ message: 'Database error occurred.' });
+        }
+
+        if (!results || results.length === 0) {
+            return res.status(404).json({ message: 'No videos found.' });
+        }
+
+        res.status(200).json(results);
+    });
+});
