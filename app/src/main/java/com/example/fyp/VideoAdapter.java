@@ -1,15 +1,26 @@
 package com.example.fyp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.List;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
+
     private List<Video> videos; // 從後端獲取的影片列表
     private OnItemClickListener listener;
 
@@ -28,7 +39,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     @Override
     public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video, parent, false);
-        return new VideoViewHolder(view);
+        return new VideoViewHolder(view, parent.getContext());
     }
 
     @Override
@@ -40,6 +51,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         holder.tvDuration.setText(video.getDuration());
         holder.tvLevel.setText(video.getLevel());
         holder.tvDescription.setText(video.getDescription());
+
         // 通過圖片名稱獲取對應的資源 ID
         int resourceId = holder.itemView.getContext().getResources().getIdentifier(
                 video.getThumbnail(), // 後端返回的圖片名稱（如 "strength_video_3"）
@@ -59,6 +71,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         // 設定點擊事件
         holder.itemView.setOnClickListener(v -> listener.onItemClick(video));
+
+        // 設定當前 video
+        holder.video = video;
     }
 
     @Override
@@ -67,12 +82,15 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     }
 
     static class VideoViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvDuration, tvLevel,tvDescription;
+        TextView tvTitle, tvDuration, tvLevel, tvDescription;
         ImageView ivThumbnail, ivLike;
-        boolean isLiked = false;
+        boolean isLiked = false; // 預設未點擊 Like
+        Video video; // 當前 ViewHolder 綁定的影片
+        Context context;
 
-        public VideoViewHolder(@NonNull View itemView) {
+        public VideoViewHolder(@NonNull View itemView, Context context) {
             super(itemView);
+            this.context = context;
 
             // 綁定 UI 元件
             tvTitle = itemView.findViewById(R.id.tvTitle);
@@ -89,10 +107,13 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         // 切換 Like 按鈕狀態
         private void toggleLike() {
             isLiked = !isLiked;
+
             if (isLiked) {
                 ivLike.setImageResource(R.drawable.like_filled); // 已喜歡
+                sendLikeRequest(); // 向後端發送 Like 請求
             } else {
                 ivLike.setImageResource(R.drawable.like_outline); // 未喜歡
+                sendUnlikeRequest(); // 向後端發送 Unlike 請求
             }
         }
 
@@ -103,6 +124,68 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             } else {
                 ivLike.setImageResource(R.drawable.like_outline);
             }
+        }
+
+        // 發送 Like 請求
+        private void sendLikeRequest() {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+            String userId = sharedPreferences.getString("userId", null);
+
+            if (userId == null || video == null) {
+                Log.e("VideoAdapter", "User ID or Video is null. Cannot send like request.");
+                return;
+            }
+
+            LikeVideoRequest request = new LikeVideoRequest(userId, video.getId());
+            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+            Call<ResponseBody> call = apiService.likeVideo(request);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        Log.d("VideoAdapter", "Like request successful for video " + video.getId());
+                    } else {
+                        Log.e("VideoAdapter", "Like request failed: " + response.errorBody());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("VideoAdapter", "Error sending like request: ", t);
+                }
+            });
+        }
+
+        // 發送 Unlike 請求
+        private void sendUnlikeRequest() {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+            String userId = sharedPreferences.getString("userId", null);
+
+            if (userId == null || video == null) {
+                Log.e("VideoAdapter", "User ID or Video is null. Cannot send unlike request.");
+                return;
+            }
+
+            LikeVideoRequest request = new LikeVideoRequest(userId, video.getId());
+            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+            Call<ResponseBody> call = apiService.unlikeVideo(request);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        Log.d("VideoAdapter", "Unlike request successful for video " + video.getId());
+                    } else {
+                        Log.e("VideoAdapter", "Unlike request failed: " + response.errorBody());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("VideoAdapter", "Error sending unlike request: ", t);
+                }
+            });
         }
     }
 }

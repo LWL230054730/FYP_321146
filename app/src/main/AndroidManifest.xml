@@ -44,6 +44,7 @@
         <activity android:name=".StrengthVideoActivity" />
         <activity android:name=".TrainingDetailActivity" />
         <activity android:name=".AllVideosActivity" />
+        <activity android:name=".LikedVideosActivity" />
         <activity
             android:name=".YouTubePlayerActivity"
             android:configChanges="orientation|screenSize"

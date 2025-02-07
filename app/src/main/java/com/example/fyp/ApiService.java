@@ -40,4 +40,13 @@ public interface ApiService {
 
     @GET("api/videos")
     Call<List<Video>> getVideos();
+
+    @POST("api/videos/like")
+    Call<ResponseBody> likeVideo(@Body LikeVideoRequest likeVideoRequest);
+
+    @POST("api/videos/unlike")
+    Call<ResponseBody> unlikeVideo(@Body LikeVideoRequest likeVideoRequest);
+
+    @GET("/api/videos/liked")
+    Call<List<Video>> getLikedVideos();
 }

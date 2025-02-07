@@ -355,8 +355,9 @@ app.post('/api/plan/videos', (req, res) => {
     });
 });
 
+//Get all workous videos
 app.get('/api/videos', (req, res) => {
-    const limit = parseInt(req.query.limit) || 10; // 默认每页 10 条
+    const limit = parseInt(req.query.limit) || 20; // 默认每页 20 条
     const offset = parseInt(req.query.offset) || 0; // 默认从第 0 条开始
     const type = req.query.type || null; // 可选查询参数
 
@@ -379,6 +380,89 @@ app.get('/api/videos', (req, res) => {
 
         if (!results || results.length === 0) {
             return res.status(404).json({ message: 'No videos found.' });
+        }
+
+        res.status(200).json(results);
+    });
+});
+
+// Click Like API
+app.post('/api/videos/like', (req, res) => {
+    const { userId, videoId } = req.body;
+
+    if (!userId || !videoId) {
+        return res.status(400).json({ message: 'userId and videoId are required.' });
+    }
+
+    const query = `INSERT INTO videoLikes (user_id, video_id) VALUES (?, ?)`;
+
+    db.query(query, [userId, videoId], (error, results) => {
+        if (error) {
+            console.error('Database error:', error.message, error.stack);
+            return res.status(500).json({ message: 'Database error occurred.' });
+        }
+
+        res.status(201).json({ message: 'Video liked successfully.' });
+    });
+});
+
+// Cancel Like API
+app.post('/api/videos/unlike', (req, res) => {
+    const { userId, videoId } = req.body;
+
+    if (!userId || !videoId) {
+        return res.status(400).json({ message: 'userId and videoId are required.' });
+    }
+
+    const query = `DELETE FROM videoLikes WHERE user_id = ? AND video_id = ?`;
+
+    db.query(query, [userId, videoId], (error, results) => {
+        if (error) {
+            console.error('Database error:', error.message, error.stack);
+            return res.status(500).json({ message: 'Database error occurred.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'No like record found to delete.' });
+        }
+
+        res.status(200).json({ message: 'Video unliked successfully.' });
+    });
+});
+
+
+// Get the list of videos that user have been Liked
+app.get('/api/videos/liked', (req, res) => {
+    const { userId } = req.query;
+
+    if (!userId) {
+        return res.status(400).json({ message: 'userId is required.' });
+    }
+
+    const query = `
+        SELECT 
+            videos.id,
+            videos.title,
+            videos.type,
+            videos.duration,
+            videos.description,
+            videos.url,
+            videos.thumbnail,
+            videos.level
+        FROM 
+            videos
+        INNER JOIN 
+            videoLikes 
+        ON 
+            videos.id = videoLikes.video_id
+        WHERE 
+            videoLikes.user_id = ?
+    `;
+
+    db.query(query, [userId], (error, results) => {
+        if (error) {
+            console.error('Database error:', error.message, error.stack);
+            return res.status(500).json({ message: 'Database error occurred.' });
         }
 
         res.status(200).json(results);

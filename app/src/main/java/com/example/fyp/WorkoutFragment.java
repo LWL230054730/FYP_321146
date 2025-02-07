@@ -50,11 +50,8 @@ public class WorkoutFragment extends Fragment {
         // Liked videos button click event
         ImageView likedVideosButton = view.findViewById(R.id.liked_videos_button);
         likedVideosButton.setOnClickListener(v -> {
-            Fragment likedVideosFragment = new LikedVideosFragment();
-            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, likedVideosFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            Intent intent = new Intent(getActivity(), LikedVideosActivity.class);
+            startActivity(intent);
         });
 
         return view;
